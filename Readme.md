@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Dmitry Novikov](https://up.htmlacademy.ru/javascript/25/user/2002423).
-* Наставник: `Неизвестно`.
+* Наставник: [Ольга Юзич](https://htmlacademy.ru/profile/id350391).
 
 ---
 
