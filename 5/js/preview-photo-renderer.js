@@ -6,7 +6,7 @@ function renderPhotosPreview(photos) {
     const newPhotoTemplate = photoTemplate.cloneNode(true);
     newPhotoTemplate.querySelector('.picture__img').src = photo.url;
     newPhotoTemplate.querySelector('.picture__likes').textContent = photo.likes;
-    newPhotoTemplate.querySelector('.pictur`e__comments').textContent = photo.comments.length;
+    newPhotoTemplate.querySelector('.picture__comments').textContent = photo.comments.length;
     photoListFragment.appendChild(newPhotoTemplate);
   });
   photoContainer.appendChild(photoListFragment);
