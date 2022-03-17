@@ -52,8 +52,8 @@ function renderComments(photo) {
   const commentsListFragment = document.createDocumentFragment();
   userComments.forEach((comment) => {
     const newCommentTemplate = commentTemplate.cloneNode(true);
-    newCommentTemplate.alt = comment.name;
-    newCommentTemplate.avatar = comment.avatar;
+    newCommentTemplate.querySelector('.social__picture').alt = comment.name;
+    newCommentTemplate.querySelector('.social__picture').src = comment.avatar;
     newCommentTemplate.querySelector('.social__text').textContent = comment.message;
     commentsListFragment.appendChild(newCommentTemplate);
   });

@@ -44,7 +44,7 @@ function getRandomLikesCount() {
 const createComment = (idx) => (
   {
     id: ++commentsCount,
-    avatar: `img/avatar-${idx}.svg`,
+    avatar: `img/avatar-${idx + 1}.svg`,
     message: getRandomArrayElement(MESSAGE_LIST),
     name: COMMENTATOR_LIST[idx]
   }
