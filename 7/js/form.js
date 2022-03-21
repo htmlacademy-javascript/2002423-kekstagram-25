@@ -129,7 +129,7 @@ function initForm() {
   pristine.addValidator(hashTagsField, hashTagValueValidator.isContainNotOnlySharp, 'Хеш-тег не может состоять только из одной решётки;', 2, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isContainValidSymbols, 'Строка после решётки должна состоять из букв и чисел', 1, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isFitWithLength, 'Максимальная длина одного хэш-тега 20 символов, включая решётку', 3, true);
-  pristine.addValidator(hashTagsField, commentValueValidator.isFitWithLength, 'Длина комментария не может составлять больше 140 символов;', 1, true);
+  pristine.addValidator(commentsField, commentValueValidator.isFitWithLength, 'Длина комментария не может составлять больше 140 символов;');
 }
 
 export {initForm};
