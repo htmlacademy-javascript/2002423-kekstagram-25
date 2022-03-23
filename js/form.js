@@ -27,7 +27,7 @@ const onSubmit = () => {
 const onEditEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    if (document.activeElement === commentsField) {
+    if (document.activeElement === commentsField || document.activeElement === hashTagsField) {
       evt.stopPropagation();
       return;
     }
