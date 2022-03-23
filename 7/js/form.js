@@ -67,13 +67,12 @@ const hashTagListValidator = function() {
   const isCountValid = (val) => (
     val.length <= HASH_TAGS_MAX_COUNT
   );
-  const isUniqueElements = () => {
-    const hashTags = getSplittedHashTags();
-    return hashTags.length === new Set(hashTags.map((t) => (t.toLowerCase()))).size;
-  };
+  const isUniqueElements = (val) => (
+    val.length === new Set(val.map((t) => (t.toLowerCase()))).size
+  );
   return {
     isCountValid: () => validate(isCountValid),
-    isUniqueElements: () => validate(isUniqueElements)
+    isContainUniqueElements: () => validate(isUniqueElements)
   };
 }();
 
@@ -124,7 +123,7 @@ function initForm() {
   btnUploadCancel.addEventListener('click', () => closeForm());
   frmUpload.addEventListener('submit', () => onSubmit());
   pristine.addValidator(hashTagsField, hashTagListValidator.isCountValid, 'Нельзя указать больше пяти хэш-тегов', 1, true);
-  pristine.addValidator(hashTagsField, hashTagListValidator.isUniqueElements, 'Один и тот же хэш-тег не может быть использован дважды', 3, true);
+  pristine.addValidator(hashTagsField, hashTagListValidator.isContainUniqueElements, 'Один и тот же хэш-тег не может быть использован дважды', 3, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isStartWithSharp, 'Хэш-тег начинается с символа # (решётка)', 1, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isContainNotOnlySharp, 'Хеш-тег не может состоять только из одной решётки;', 2, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isContainValidSymbols, 'Строка после решётки должна состоять из букв и чисел', 1, true);
