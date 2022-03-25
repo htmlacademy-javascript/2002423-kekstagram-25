@@ -697,6 +697,11 @@ main {
   border-radius: 5px;
 }
 
+.text__label--error {
+  margin: 0 auto;
+  width: 450px;
+  color: #cc0000;
+}
 
 /**
  * Кнопка для отправки изображения
