@@ -1,7 +1,8 @@
 const sliderElement = document.querySelector('.effect-level__slider');
-const effects = document.querySelectorAll('.img-upload__effects input[name="effect"]');
 const valueElement = document.querySelector('.effect-level__value');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
+const rbtnEffectsGroup = document.querySelector('.effects__list');
+
 
 const EffectTypes = {
   NONE: {value: 'none'},
@@ -96,6 +97,12 @@ const settingsByEffectName = new Map([
   [EffectTypes.HEAT.value, heatEffectHandler],
 ]);
 
+const rbtnEffectsGroupOnClick = (evt) => {
+  if (evt.target.classList.contains('effects__radio')) {
+    settingsByEffectName.get(evt.target.value)();
+  }
+};
+
 const initEffects = () => {
   noEffectHandler();
   if (sliderElement.noUiSlider) {
@@ -106,9 +113,7 @@ const initEffects = () => {
     valueElement.value = sliderElement.noUiSlider.get();
     imgUploadPreview.style.filter = `${selectedEffect.filter}(${valueElement.value}${selectedEffect.units})`;
   });
-  effects.forEach((effect) => {
-    effect.addEventListener('click', settingsByEffectName.get(effect.value));
-  });
+  rbtnEffectsGroup.addEventListener('click', (evt) => rbtnEffectsGroupOnClick(evt));
 };
 
 export {initEffects};
