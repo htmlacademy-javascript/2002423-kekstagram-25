@@ -1,8 +1,13 @@
 import {isEscapeKey} from './utils.js';
+import {initEffects} from './photo-effect-slider.js';
 
 const HASH_TAG_MAX_LENGTH = 20;
 const HASH_TAGS_MAX_COUNT = 5;
 const COMMENT_MAX_LENGTH = 140;
+const PHOTO_SCALE_STEP = 25;
+const PHOTO_SCALE_MIN_VALUE = 25;
+const PHOTO_SCALE_MAX_VALUE = 100;
+const VALID_HASH_TAG_TEMPLATE = /^#[A-Za-zА-яЁё0-9]+$/;
 
 const frmUpload = document.querySelector('.img-upload__form');
 const uploadDialog = document.querySelector('#upload-file');
@@ -11,7 +16,10 @@ const btnUploadCancel = document.querySelector('#upload-cancel');
 const hashTagsField = document.querySelector('.text__hashtags');
 const commentsField = document.querySelector('.text__description');
 const btnSubmit = document.querySelector('.img-upload__submit');
-const validHashTagTemplate = /^#[A-Za-zА-яЁё0-9]+$/;
+const scaleControleValueField = document.querySelector('.scale__control--value');
+const imgUploadPreview = document.querySelector('.img-upload__preview img');  //1
+const btnSizeSmaller = document.querySelector('.scale__control--smaller');
+const btnSizeBigger = document.querySelector('.scale__control--bigger');
 
 const pristine = new Pristine(frmUpload, {
   classTo: 'form__item',
@@ -19,6 +27,37 @@ const pristine = new Pristine(frmUpload, {
   errorTextParent: 'form__item',
   errorTextTag: 'p'
 });
+
+function setPhotoScale(value) {
+  imgUploadPreview.style.transform = `scale(${value}%)`;
+  scaleControleValueField.value = `${value}%`;
+}
+
+function resetPhotoScale() {
+  imgUploadPreview.style.transform = 'scale(100%)';
+  scaleControleValueField.value = '100';
+}
+
+const btnSizeSmallerOnClick = () => {
+  const currentScale = parseFloat(scaleControleValueField.value);
+  if(currentScale === PHOTO_SCALE_MIN_VALUE) {
+    return;
+  }
+  const newScalePercent = (currentScale - PHOTO_SCALE_STEP);
+  setPhotoScale(newScalePercent);
+};
+
+const btnSizeBiggerOnClick = () => {
+  const currentScale = parseFloat(scaleControleValueField.value);
+  if(currentScale === PHOTO_SCALE_MAX_VALUE) {
+    return;
+  }
+  const newScalePercent = (currentScale + PHOTO_SCALE_STEP);
+  setPhotoScale(newScalePercent);
+};
+
+btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
+btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
 
 const onSubmit = () => {
   hashTagsField.value = hashTagsField.value.trim();
@@ -45,6 +84,7 @@ function openForm() {
   document.addEventListener('keydown', onEditEscKeydown);
   hashTagsField.addEventListener('input', onFieldInput);
   commentsField.addEventListener('input', onFieldInput);
+  initEffects();
 }
 
 function closeForm() {
@@ -54,6 +94,7 @@ function closeForm() {
   hashTagsField.removeEventListener('input', onFieldInput);
   commentsField.removeEventListener('input', onFieldInput);
   frmUpload.reset();
+  resetPhotoScale();
 }
 
 function getSplittedHashTags() {
@@ -93,7 +134,7 @@ const hashTagValueValidator = function() {
     !(val.length === 1 && isStartWithSharp(val))
   );
   const isContainValidSymbols = (val) => (
-    validHashTagTemplate.test(val)
+    VALID_HASH_TAG_TEMPLATE.test(val)
   );
   const isFitWithLength = (val) => (
     val.length <= HASH_TAG_MAX_LENGTH
