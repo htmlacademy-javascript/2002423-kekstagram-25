@@ -1,5 +1,6 @@
 import {isEscapeKey} from './utils.js';
 import {initEffects} from './photo-effect-slider.js';
+import {uploadPhoto} from './service-api.js';
 
 const HASH_TAG_MAX_LENGTH = 20;
 const HASH_TAGS_MAX_COUNT = 5;
@@ -17,9 +18,11 @@ const hashTagsField = document.querySelector('.text__hashtags');
 const commentsField = document.querySelector('.text__description');
 const btnSubmit = document.querySelector('.img-upload__submit');
 const scaleControleValueField = document.querySelector('.scale__control--value');
-const imgUploadPreview = document.querySelector('.img-upload__preview img');  //1
+const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const btnSizeSmaller = document.querySelector('.scale__control--smaller');
 const btnSizeBigger = document.querySelector('.scale__control--bigger');
+const errorUploadTemplate = document.querySelector('#error').content;
+const successUploadTemplate = document.querySelector('#success').content;
 
 const pristine = new Pristine(frmUpload, {
   classTo: 'form__item',
@@ -59,8 +62,73 @@ const btnSizeBiggerOnClick = () => {
 btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
 btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
 
-const onSubmit = () => {
+function showSuccessModal() {
+  const newSuccessTemplate = successUploadTemplate.cloneNode(true);
+  const successButton = newSuccessTemplate.querySelector('.success__button');
+  const successModal = newSuccessTemplate.querySelector('.success');
+  document.addEventListener('keydown', (evt) => {
+    if (isEscapeKey(evt)) {
+      successModal.remove();
+    }
+  });
+  document.addEventListener('click', (evt) => {
+    if (evt.target === successModal || evt.target === successButton) {
+      successModal.remove();
+    }
+  });
+  document.body.classList.add('modal-open');
+  document.body.appendChild(newSuccessTemplate);
+}
+
+function showErrorModal(message) {
+  const newErrorTemplate = errorUploadTemplate.cloneNode(true);
+  const errorButton = newErrorTemplate.querySelector('.error__button');
+  const errorModal = newErrorTemplate.querySelector('.error');
+  const errorLabel = newErrorTemplate.querySelector('.error__title');
+  errorLabel.textContent = message;
+  document.addEventListener('keydown', (evt) => {
+    if (isEscapeKey(evt)) {
+      errorModal.remove();
+    }
+  });
+  document.addEventListener('click', (evt) => {
+    if (evt.target === errorModal || evt.target === errorButton) {
+      errorModal.remove();
+    }
+  });
+  document.body.classList.add('modal-open');
+  document.body.appendChild(newErrorTemplate);
+}
+
+const blockSubmitBtn = () => {
+  btnSubmit.textContent = 'Публикую...';
+  btnSubmit.disabled = true;
+};
+
+const unblockSubmitBtn = () => {
+  btnSubmit.textContent = 'Опубликовать';
+  btnSubmit.disabled = false;
+};
+
+const successUploadHandler = () => {
+  closeForm();
+  showSuccessModal();
+  unblockSubmitBtn();
+};
+
+const errorUploadHandler = (message) => {
+  closeForm();
+  showErrorModal(message);
+  unblockSubmitBtn();
+};
+
+const onSubmit = (evt) => {
+  evt.preventDefault();
   hashTagsField.value = hashTagsField.value.trim();
+  if (pristine.validate()) {
+    blockSubmitBtn();
+    uploadPhoto(successUploadHandler, errorUploadHandler, new FormData(evt.target));
+  }
 };
 
 const onEditEscKeydown = (evt) => {
@@ -95,6 +163,8 @@ function closeForm() {
   commentsField.removeEventListener('input', onFieldInput);
   frmUpload.reset();
   resetPhotoScale();
+  frmContent.querySelectorAll('.pristine-error').forEach((e) => e.remove());
+  unblockSubmitBtn();
 }
 
 function getSplittedHashTags() {
@@ -162,7 +232,7 @@ const commentValueValidator = function() {
 function initForm() {
   uploadDialog.addEventListener('change', () => openForm());
   btnUploadCancel.addEventListener('click', () => closeForm());
-  frmUpload.addEventListener('submit', () => onSubmit());
+  frmUpload.addEventListener('submit', (evt) => onSubmit(evt));
   pristine.addValidator(hashTagsField, hashTagListValidator.isCountValid, 'Нельзя указать больше пяти хэш-тегов', 1, true);
   pristine.addValidator(hashTagsField, hashTagListValidator.isContainUniqueElements, 'Один и тот же хэш-тег не может быть использован дважды', 3, true);
   pristine.addValidator(hashTagsField, hashTagValueValidator.isStartWithSharp, 'Хэш-тег начинается с символа # (решётка)', 1, true);
