@@ -1,4 +1,4 @@
-import {isEscapeKey} from './utils.js';
+import {isEscapeKey, showAlert} from './utils.js';
 import {initEffects} from './photo-effect-slider.js';
 import {uploadPhoto} from './service-api.js';
 
@@ -9,6 +9,7 @@ const PHOTO_SCALE_STEP = 25;
 const PHOTO_SCALE_MIN_VALUE = 25;
 const PHOTO_SCALE_MAX_VALUE = 100;
 const VALID_HASH_TAG_TEMPLATE = /^#[A-Za-zА-яЁё0-9]+$/;
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const frmUpload = document.querySelector('.img-upload__form');
 const uploadDialog = document.querySelector('#upload-file');
@@ -146,6 +147,20 @@ const onFieldInput = () => {
   btnSubmit.disabled = !pristine.validate();
 };
 
+function showUploadPhotoPreview() {
+  const file = uploadDialog.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((ft) => (
+    fileName.endsWith(ft)
+  ));
+  if (!matches) {
+    showAlert(`Фомат файла ${fileName} не поддерживается`);
+    closeForm();
+    return;
+  }
+  imgUploadPreview.src = URL.createObjectURL(file);
+}
+
 function openForm() {
   frmContent.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -153,6 +168,7 @@ function openForm() {
   hashTagsField.addEventListener('input', onFieldInput);
   commentsField.addEventListener('input', onFieldInput);
   initEffects();
+  showUploadPhotoPreview();
 }
 
 function closeForm() {
