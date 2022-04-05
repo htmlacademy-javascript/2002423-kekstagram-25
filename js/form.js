@@ -1,4 +1,4 @@
-import {isEscapeKey} from './utils.js';
+import {isEscapeKey, showAlert} from './utils.js';
 import {initEffects} from './photo-effect-slider.js';
 import {uploadPhoto} from './service-api.js';
 
@@ -9,6 +9,7 @@ const PHOTO_SCALE_STEP = 25;
 const PHOTO_SCALE_MIN_VALUE = 25;
 const PHOTO_SCALE_MAX_VALUE = 100;
 const VALID_HASH_TAG_TEMPLATE = /^#[A-Za-zА-яЁё0-9]+$/;
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const frmUpload = document.querySelector('.img-upload__form');
 const uploadDialog = document.querySelector('#upload-file');
@@ -62,20 +63,36 @@ const btnSizeBiggerOnClick = () => {
 btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
 btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
 
+const onSubmitResultModalKeyDown = (evt, modal) => {
+  if (isEscapeKey(evt)) {
+    modal.remove();
+  }
+};
+
+const onSubmitResultModalClick = (evt, modal, btn) => {
+  if (evt.target === modal || evt.target === btn) {
+    modal.remove();
+  }
+};
+
+function clearSubmitModalListeners() {
+  document.removeEventListener('keydown', document.submitResultModalKeyDownEvt);
+  document.removeEventListener('click', document.submitResultModalClickEvt);
+}
+
 function showSuccessModal() {
   const newSuccessTemplate = successUploadTemplate.cloneNode(true);
   const successButton = newSuccessTemplate.querySelector('.success__button');
   const successModal = newSuccessTemplate.querySelector('.success');
-  document.addEventListener('keydown', (evt) => {
-    if (isEscapeKey(evt)) {
-      successModal.remove();
-    }
-  });
-  document.addEventListener('click', (evt) => {
-    if (evt.target === successModal || evt.target === successButton) {
-      successModal.remove();
-    }
-  });
+  clearSubmitModalListeners();
+  document.addEventListener(
+    'keydown',
+    document.submitResultModalKeyDownEvt = (evt) => onSubmitResultModalKeyDown(evt, successModal)
+  );
+  document.addEventListener(
+    'click',
+    document.submitResultModalClickEvt = (evt) => onSubmitResultModalClick(evt, successModal, successButton)
+  );
   document.body.classList.add('modal-open');
   document.body.appendChild(newSuccessTemplate);
 }
@@ -146,6 +163,20 @@ const onFieldInput = () => {
   btnSubmit.disabled = !pristine.validate();
 };
 
+function showUploadPhotoPreview() {
+  const file = uploadDialog.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((ft) => (
+    fileName.endsWith(ft)
+  ));
+  if (!matches) {
+    showAlert(`Фомат файла ${fileName} не поддерживается`);
+    closeForm();
+    return;
+  }
+  imgUploadPreview.src = URL.createObjectURL(file);
+}
+
 function openForm() {
   frmContent.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -153,6 +184,7 @@ function openForm() {
   hashTagsField.addEventListener('input', onFieldInput);
   commentsField.addEventListener('input', onFieldInput);
   initEffects();
+  showUploadPhotoPreview();
 }
 
 function closeForm() {
@@ -163,7 +195,7 @@ function closeForm() {
   commentsField.removeEventListener('input', onFieldInput);
   frmUpload.reset();
   resetPhotoScale();
-  frmContent.querySelectorAll('.pristine-error').forEach((e) => e.remove());
+  pristine.reset();
   unblockSubmitBtn();
 }
 
