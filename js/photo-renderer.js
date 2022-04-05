@@ -45,7 +45,7 @@ function resetComments() {
 function onClosePictureModal() {
   photoModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onPopupEscKeydown);
+  document.removeEventListener('keydown', document.popupEscKeydownEvt);
   resetComments();
 }
 
@@ -55,7 +55,10 @@ const openPictureModal = (evtPictureContainer, pictureById) => {
     renderPhoto(parentNode, pictureById);
     document.body.classList.add('modal-open');
     cancelBigPicture.addEventListener('click', () => onClosePictureModal());
-    document.addEventListener('keydown', (evt) => onPopupEscKeydown(evt));
+    document.addEventListener(
+      'keydown',
+      document.popupEscKeydownEvt = (evt) => onPopupEscKeydown(evt)
+    );
   }
 };
 
