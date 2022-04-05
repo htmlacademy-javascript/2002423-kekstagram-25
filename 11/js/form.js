@@ -63,20 +63,36 @@ const btnSizeBiggerOnClick = () => {
 btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
 btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
 
+const onSubmitResultModalKeyDown = (evt, modal) => {
+  if (isEscapeKey(evt)) {
+    modal.remove();
+  }
+};
+
+const onSubmitResultModalClick = (evt, modal, btn) => {
+  if (evt.target === modal || evt.target === btn) {
+    modal.remove();
+  }
+};
+
+function clearSubmitModalListeners() {
+  document.removeEventListener('keydown', document.submitResultModalKeyDownEvt);
+  document.removeEventListener('click', document.submitResultModalClickEvt);
+}
+
 function showSuccessModal() {
   const newSuccessTemplate = successUploadTemplate.cloneNode(true);
   const successButton = newSuccessTemplate.querySelector('.success__button');
   const successModal = newSuccessTemplate.querySelector('.success');
-  document.addEventListener('keydown', (evt) => {
-    if (isEscapeKey(evt)) {
-      successModal.remove();
-    }
-  });
-  document.addEventListener('click', (evt) => {
-    if (evt.target === successModal || evt.target === successButton) {
-      successModal.remove();
-    }
-  });
+  clearSubmitModalListeners();
+  document.addEventListener(
+    'keydown',
+    document.submitResultModalKeyDownEvt = (evt) => onSubmitResultModalKeyDown(evt, successModal)
+  );
+  document.addEventListener(
+    'click',
+    document.submitResultModalClickEvt = (evt) => onSubmitResultModalClick(evt, successModal, successButton)
+  );
   document.body.classList.add('modal-open');
   document.body.appendChild(newSuccessTemplate);
 }
@@ -179,7 +195,7 @@ function closeForm() {
   commentsField.removeEventListener('input', onFieldInput);
   frmUpload.reset();
   resetPhotoScale();
-  frmContent.querySelectorAll('.pristine-error').forEach((e) => e.remove());
+  pristine.reset();
   unblockSubmitBtn();
 }
 
