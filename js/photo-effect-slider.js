@@ -1,9 +1,3 @@
-const sliderElement = document.querySelector('.effect-level__slider');
-const valueElement = document.querySelector('.effect-level__value');
-const imgUploadPreview = document.querySelector('.img-upload__preview img');
-const rbtnEffectsGroup = document.querySelector('.effects__list');
-
-
 const EffectTypes = {
   NONE: {value: 'none'},
   CHROME: {value: 'chrome', filter: 'grayscale', units: ''},
@@ -12,6 +6,11 @@ const EffectTypes = {
   PHOBOS: {value: 'phobos', filter: 'blur', units: 'px'},
   HEAT: {value: 'heat', filter: 'brightness', units: ''}
 };
+
+const sliderElement = document.querySelector('.effect-level__slider');
+const valueElement = document.querySelector('.effect-level__value');
+const imgUploadPreview = document.querySelector('.img-upload__preview img');
+const rbtnEffectsGroup = document.querySelector('.effects__list');
 
 let selectedEffect;
 

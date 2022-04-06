@@ -1416,3 +1416,7 @@ main {
 .hidden {
   display: none;
 }
+
+.text__label--error {
+  color: red;
+}

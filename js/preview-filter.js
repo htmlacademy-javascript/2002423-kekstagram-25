@@ -1,14 +1,13 @@
-import {shuffleArray, debouncer} from './utils.js';
+import {shuffleArray, createDebouncer} from './utils.js';
 
 const RANDOM_PHOTOS_MAX_COUNT = 10;
-const RERENDER_DELAY = 500;
 
 const filtersBlock = document.querySelector('.img-filters');
 const defaultFilter = document.querySelector('#filter-default');
 const randomFilter = document.querySelector('#filter-random');
 const discussedFilter = document.querySelector('#filter-discussed');
 
-let photos;
+let photoCache;
 
 function makeFilterActive(filter) {
   filtersBlock.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
@@ -34,21 +33,21 @@ const addOnFilterClickListener = (filter, cb) => {
 };
 
 function initFilters(photoList, onSuccessFilterApply) {
-  photos = photoList;
+  photoCache = photoList;
   showFilters();
-  onSuccessFilterApply(photos);
-  const d = debouncer();
+  onSuccessFilterApply(photoCache);
+  const d = createDebouncer();
   addOnFilterClickListener(
     defaultFilter,
-    d.debounce(() => onSuccessFilterApply(photoList), RERENDER_DELAY)
+    d.debounce(() => onSuccessFilterApply(photoList))
   );
   addOnFilterClickListener(
     randomFilter,
-    d.debounce(() => onSuccessFilterApply(shuffleArray(photos.slice()).slice(0, RANDOM_PHOTOS_MAX_COUNT)), RERENDER_DELAY)
+    d.debounce(() => onSuccessFilterApply(shuffleArray(photoCache.slice()).slice(0, RANDOM_PHOTOS_MAX_COUNT)))
   );
   addOnFilterClickListener(
     discussedFilter,
-    d.debounce(() => onSuccessFilterApply(photos.slice().sort(sortByComments)), RERENDER_DELAY)
+    d.debounce(() => onSuccessFilterApply(photoCache.slice().sort(sortByComments)))
   );
 }
 
