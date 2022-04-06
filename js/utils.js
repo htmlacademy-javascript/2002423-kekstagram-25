@@ -1,16 +1,4 @@
-import {isNonNegativeInt} from './validation.js';
-
 const ALERT_SHOW_TIME = 5000;
-
-function getRandomInt(min, max) {
-  if (!isNonNegativeInt(min) || !isNonNegativeInt(max)) {
-    throw new Error('Аргументы должны быть неотрицательными целыми числами');
-  }
-  if (min >= max) {
-    throw new Error('Минимальное значение должно быть меньше максимального');
-  }
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 const isEscapeKey = (evt) => (
   evt.key === 'Escape'
@@ -45,7 +33,7 @@ const shuffleArray = (arr) => {
   return arr;
 };
 
-const debouncer = function() {
+const createDebouncer = () => {
   let timeoutId;
   const debounce = (callback, timeoutDelay = 500) =>
     (...rest) => {
@@ -57,4 +45,4 @@ const debouncer = function() {
   };
 };
 
-export {getRandomInt, isEscapeKey, showAlert, shuffleArray, debouncer};
+export {isEscapeKey, showAlert, shuffleArray, createDebouncer};

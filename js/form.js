@@ -60,18 +60,17 @@ const btnSizeBiggerOnClick = () => {
   setPhotoScale(newScalePercent);
 };
 
-btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
-btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
-
 const onSubmitResultModalKeyDown = (evt, modal) => {
   if (isEscapeKey(evt)) {
     modal.remove();
+    clearSubmitModalListeners();
   }
 };
 
 const onSubmitResultModalClick = (evt, modal, btn) => {
   if (evt.target === modal || evt.target === btn) {
     modal.remove();
+    clearSubmitModalListeners();
   }
 };
 
@@ -84,7 +83,6 @@ function showSuccessModal() {
   const newSuccessTemplate = successUploadTemplate.cloneNode(true);
   const successButton = newSuccessTemplate.querySelector('.success__button');
   const successModal = newSuccessTemplate.querySelector('.success');
-  clearSubmitModalListeners();
   document.addEventListener(
     'keydown',
     document.submitResultModalKeyDownEvt = (evt) => onSubmitResultModalKeyDown(evt, successModal)
@@ -178,6 +176,8 @@ function showUploadPhotoPreview() {
 }
 
 function openForm() {
+  btnSizeSmaller.addEventListener('click', btnSizeSmallerOnClick);
+  btnSizeBigger.addEventListener('click', btnSizeBiggerOnClick);
   frmContent.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onEditEscKeydown);
@@ -188,6 +188,8 @@ function openForm() {
 }
 
 function closeForm() {
+  btnSizeSmaller.removeEventListener('click', btnSizeSmallerOnClick);
+  btnSizeBigger.removeEventListener('click', btnSizeBiggerOnClick);
   frmContent.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onEditEscKeydown);
