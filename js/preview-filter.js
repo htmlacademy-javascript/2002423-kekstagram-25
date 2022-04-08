@@ -9,14 +9,14 @@ const discussedFilter = document.querySelector('#filter-discussed');
 
 let photoCache;
 
-function makeFilterActive(filter) {
+const makeFilterActive = (filter) => {
   filtersBlock.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
   filter.classList.add('img-filters__button--active');
-}
+};
 
-function showFilters() {
+const showFilters = () => {
   filtersBlock.classList.remove('img-filters--inactive');
-}
+};
 
 const sortByComments = (photo1, photo2) => (
   photo2.comments.length - photo1.comments.length
@@ -32,7 +32,7 @@ const addOnFilterClickListener = (filter, cb) => {
   );
 };
 
-function initFilters(photoList, onSuccessFilterApply) {
+const initFilters = (photoList, onSuccessFilterApply) => {
   photoCache = photoList;
   showFilters();
   onSuccessFilterApply(photoCache);
@@ -49,6 +49,6 @@ function initFilters(photoList, onSuccessFilterApply) {
     discussedFilter,
     d.debounce(() => onSuccessFilterApply(photoCache.slice().sort(sortByComments)))
   );
-}
+};
 
 export {initFilters};
