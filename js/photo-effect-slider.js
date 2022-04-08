@@ -14,8 +14,8 @@ const rbtnEffectsGroup = document.querySelector('.effects__list');
 
 let selectedEffect;
 
-function getSliderOptions(min, max, step) {
-  return {
+const getSliderOptions = (min, max, step) => (
+  {
     range: {
       min: min,
       max: max,
@@ -23,33 +23,33 @@ function getSliderOptions(min, max, step) {
     start: max,
     step: step,
     connect: 'lower'
-  };
-}
+  }
+);
 
-function setImgClass(clazz) {
+const setImgClass = (clazz) => {
   if (imgUploadPreview.classList.contains(clazz)) {
     return;
   }
   imgUploadPreview.removeAttribute('class');
   imgUploadPreview.classList.add(clazz);
-}
+};
 
-function showSlider() {
+const showSlider = () => {
   if (sliderElement.classList.contains('hidden')) {
     sliderElement.classList.remove('hidden');
   }
-}
+};
 
-function hideSlider() {
+const hideSlider = () => {
   if (!sliderElement.classList.contains('hidden')) {
     sliderElement.classList.add('hidden');
   }
-}
+};
 
-function effectHandler(effect) {
+const effectHandler = (effect) => {
   selectedEffect = effect;
   setImgClass(`effects__preview--${effect.value}`);
-}
+};
 
 const noEffectHandler = () => {
   effectHandler(EffectTypes.NONE);
@@ -96,7 +96,7 @@ const settingsByEffectName = new Map([
   [EffectTypes.HEAT.value, heatEffectHandler],
 ]);
 
-const rbtnEffectsGroupOnClick = (evt) => {
+const onRbtnEffectsGroupClick = (evt) => {
   if (evt.target.classList.contains('effects__radio')) {
     settingsByEffectName.get(evt.target.value)();
   }
@@ -112,7 +112,7 @@ const initEffects = () => {
     valueElement.value = sliderElement.noUiSlider.get();
     imgUploadPreview.style.filter = `${selectedEffect.filter}(${valueElement.value}${selectedEffect.units})`;
   });
-  rbtnEffectsGroup.addEventListener('click', (evt) => rbtnEffectsGroupOnClick(evt));
+  rbtnEffectsGroup.addEventListener('click', (evt) => onRbtnEffectsGroupClick(evt));
 };
 
 export {initEffects};

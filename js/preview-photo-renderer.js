@@ -1,11 +1,11 @@
 const photoContainer = document.querySelector('.pictures');
 
-function cleanPreviews() {
+const cleanPreviews = () => {
   const photoPreviews = photoContainer.querySelectorAll('.picture');
   photoPreviews.forEach((photoPreview) => photoPreview.remove());
-}
+};
 
-function renderPhotosPreview(photos) {
+const renderPhotosPreview = (photos) => {
   const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
   const photoListFragment = document.createDocumentFragment();
   cleanPreviews();
@@ -18,6 +18,6 @@ function renderPhotosPreview(photos) {
     photoListFragment.appendChild(newPhotoTemplate);
   });
   photoContainer.appendChild(photoListFragment);
-}
+};
 
 export {renderPhotosPreview};
