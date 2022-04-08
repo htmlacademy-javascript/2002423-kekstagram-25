@@ -125,14 +125,14 @@ const unblockSubmitBtn = () => {
   btnSubmit.disabled = false;
 };
 
-const onEditEscKeydown = (evt, onSuccess) => {
+const onEditEscKeydown = (evt, cb) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     if (document.activeElement === commentsField || document.activeElement === hashTagsField) {
       evt.stopPropagation();
       return;
     }
-    onSuccess();
+    cb();
   }
 };
 
@@ -140,21 +140,8 @@ const onFieldInput = () => {
   btnSubmit.disabled = !pristine.validate();
 };
 
-const showUploadPhotoPreview = (onFail) => {
-  const file = uploadDialog.files[0];
-  const fileName = file.name.toLowerCase();
-  const matches = FILE_TYPES.some((ft) => (
-    fileName.endsWith(ft)
-  ));
-  if (!matches) {
-    showAlert(`Фомат файла ${fileName} не поддерживается`);
-    onFail();
-    return;
-  }
-  imgUploadPreview.src = URL.createObjectURL(file);
-};
-
 const closeForm = () => {
+  btnUploadCancel.removeEventListener('click', closeForm);
   btnSizeSmaller.removeEventListener('click', onBtnSizeSmallerClick);
   btnSizeBigger.removeEventListener('click', onBtnSizeBiggerClick);
   frmContent.classList.add('hidden');
@@ -168,7 +155,22 @@ const closeForm = () => {
   unblockSubmitBtn();
 };
 
+const showUploadPhotoPreview = () => {
+  const file = uploadDialog.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((ft) => (
+    fileName.endsWith(ft)
+  ));
+  if (!matches) {
+    showAlert(`Фомат файла ${fileName} не поддерживается`);
+    closeForm();
+    return;
+  }
+  imgUploadPreview.src = URL.createObjectURL(file);
+};
+
 const openForm = () => {
+  btnUploadCancel.addEventListener('click', closeForm);
   btnSizeSmaller.addEventListener('click', onBtnSizeSmallerClick);
   btnSizeBigger.addEventListener('click', onBtnSizeBiggerClick);
   frmContent.classList.remove('hidden');
@@ -180,7 +182,7 @@ const openForm = () => {
   hashTagsField.addEventListener('input', onFieldInput);
   commentsField.addEventListener('input', onFieldInput);
   initEffects();
-  showUploadPhotoPreview(closeForm);
+  showUploadPhotoPreview();
 };
 
 const successUploadHandler = () => {
@@ -267,8 +269,7 @@ const createCommentValueValidator = () => {
 };
 
 const initForm = () => {
-  uploadDialog.addEventListener('change', () => openForm());
-  btnUploadCancel.addEventListener('click', () => closeForm());
+  uploadDialog.addEventListener('change', openForm);
   frmUpload.addEventListener('submit', (evt) => onSubmit(evt));
   const hashTagValidator = createHashTagListValidator();
   const hashTagValueValidator = createHashTagValueValidator();
